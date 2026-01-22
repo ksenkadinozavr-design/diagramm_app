@@ -28,6 +28,20 @@ def _edge_with_ports(edge: Edge) -> tuple[str, str, str | None]:
     return edge.from_id, f"{edge.to_id}:{port}", None
 
 
+def _ranked_nodes(diagram: Diagram) -> dict[str, list[str]]:
+    buckets: dict[str, list[str]] = {
+        "input": [],
+        "control": [],
+        "mechanism": [],
+        "output": [],
+    }
+    node_types = {node.id: node.type for node in diagram.nodes}
+    for node_id, node_type in node_types.items():
+        if node_type in buckets:
+            buckets[node_type].append(node_id)
+    return buckets
+
+
 def _style_lines(style: str | None) -> list[str]:
     if style != "idef0":
         return ["  rankdir=LR;", "  node [shape=box];"]
@@ -45,6 +59,17 @@ def to_dot(diagram: Diagram, *, style: str | None = None) -> str:
     for node in diagram.nodes:
         label = _format_label(node.label or node.id)
         lines.append(f'  {node.id} [label="{label}"];')
+
+    if style == "idef0":
+        buckets = _ranked_nodes(diagram)
+        if buckets["control"]:
+            lines.append("  { rank=source; " + "; ".join(buckets["control"]) + "; }")
+        if buckets["input"]:
+            lines.append("  { rank=min; " + "; ".join(buckets["input"]) + "; }")
+        if buckets["output"]:
+            lines.append("  { rank=max; " + "; ".join(buckets["output"]) + "; }")
+        if buckets["mechanism"]:
+            lines.append("  { rank=sink; " + "; ".join(buckets["mechanism"]) + "; }")
 
     for edge in diagram.edges:
         from_id, to_id, label = _edge_with_ports(edge)
