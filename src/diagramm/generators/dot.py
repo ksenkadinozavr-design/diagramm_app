@@ -34,6 +34,7 @@ def _ranked_nodes(diagram: Diagram) -> dict[str, list[str]]:
         "control": [],
         "mechanism": [],
         "output": [],
+        "process": [],
     }
     node_types = {node.id: node.type for node in diagram.nodes}
     for node_id, node_type in node_types.items():
@@ -63,7 +64,7 @@ def to_dot(diagram: Diagram, *, style: str | None = None) -> str:
         label = _format_label(node.label or node.id)
         lines.append(f'  {node.id} [label="{label}"];')
 
-    if style == "idef0":
+    if style in {"idef0", "idef"}:
         buckets = _ranked_nodes(diagram)
         if buckets["control"]:
             lines.append("  { rank=source; " + "; ".join(buckets["control"]) + "; }")
@@ -73,6 +74,8 @@ def to_dot(diagram: Diagram, *, style: str | None = None) -> str:
             lines.append("  { rank=max; " + "; ".join(buckets["output"]) + "; }")
         if buckets["mechanism"]:
             lines.append("  { rank=sink; " + "; ".join(buckets["mechanism"]) + "; }")
+        if buckets["process"]:
+            lines.append("  { rank=same; " + "; ".join(buckets["process"]) + "; }")
 
     for edge in diagram.edges:
         from_id, to_id, label = _edge_with_ports(edge)
