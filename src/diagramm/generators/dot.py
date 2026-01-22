@@ -43,14 +43,17 @@ def _ranked_nodes(diagram: Diagram) -> dict[str, list[str]]:
 
 
 def _style_lines(style: str | None) -> list[str]:
-    if style != "idef0":
+    if style is None:
         return ["  rankdir=LR;", "  node [shape=box];"]
 
-    return [
-        "  graph [rankdir=LR, splines=ortho, nodesep=0.9, ranksep=1.2, bgcolor=\"#ffffff\", fontname=\"Arial\", fontsize=10, overlap=false, concentrate=false, pad=\"0.2\"];",
-        "  node [shape=box, style=\"filled\", fillcolor=\"#ffffff\", color=\"#2b2b2b\", penwidth=1, fontname=\"Arial\", fontsize=10, margin=\"0.16,0.10\"];",
-        "  edge [color=\"#2b2b2b\", arrowsize=0.7, fontname=\"Arial\", fontsize=9, arrowhead=normal, penwidth=1];",
-    ]
+    if style in {"idef", "idef0"}:
+        return [
+            "  graph [rankdir=LR, splines=ortho, nodesep=0.9, ranksep=1.2, bgcolor=\"#ffffff\", fontname=\"Arial\", fontsize=10, overlap=false, concentrate=false, pad=\"0.2\"];",
+            "  node [shape=box, style=\"filled\", fillcolor=\"#ffffff\", color=\"#2b2b2b\", penwidth=1, fontname=\"Arial\", fontsize=10, margin=\"0.16,0.10\"];",
+            "  edge [color=\"#2b2b2b\", arrowsize=0.7, fontname=\"Arial\", fontsize=9, arrowhead=normal, penwidth=1];",
+        ]
+
+    return ["  rankdir=LR;", "  node [shape=box];"]
 
 
 def to_dot(diagram: Diagram, *, style: str | None = None) -> str:

@@ -60,16 +60,19 @@ def _renderer_format_from_engine(engine: str) -> str:
 def _default_engine(diagram_type: str) -> str | None:
     return {
         "idef0": "graphviz",
-        "idef1x": "plantuml",
-        "idef3": "plantuml",
-        "idef4": "plantuml",
+        "idef1x": "graphviz",
+        "idef3": "graphviz",
+        "idef4": "graphviz",
         "idef5": "graphviz",
+        "dfd": "graphviz",
     }.get(diagram_type)
 
 
 def _dot_style(diagram: Diagram) -> str | None:
     if diagram.diagram_type == "idef0":
         return "idef0"
+    if diagram.diagram_type in {"idef1x", "idef3", "idef4", "idef5", "dfd"}:
+        return "idef"
     return None
 
 
