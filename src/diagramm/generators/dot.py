@@ -33,9 +33,9 @@ def _style_lines(style: str | None) -> list[str]:
         return ["  rankdir=LR;", "  node [shape=box];"]
 
     return [
-        "  graph [rankdir=LR, splines=ortho, nodesep=0.6, ranksep=1.0, bgcolor=\"#fafafa\", fontname=\"Arial\", fontsize=10];",
-        "  node [shape=box, style=\"rounded,filled\", fillcolor=\"#ffffff\", color=\"#4a4a4a\", penwidth=1, fontname=\"Arial\", fontsize=10, margin=\"0.12,0.08\"];",
-        "  edge [color=\"#4a4a4a\", arrowsize=0.7, fontname=\"Arial\", fontsize=9];",
+        "  graph [rankdir=LR, splines=ortho, nodesep=0.9, ranksep=1.2, bgcolor=\"#ffffff\", fontname=\"Arial\", fontsize=10, overlap=false, concentrate=false, pad=\"0.2\"];",
+        "  node [shape=box, style=\"filled\", fillcolor=\"#ffffff\", color=\"#2b2b2b\", penwidth=1, fontname=\"Arial\", fontsize=10, margin=\"0.16,0.10\"];",
+        "  edge [color=\"#2b2b2b\", arrowsize=0.7, fontname=\"Arial\", fontsize=9, arrowhead=normal, penwidth=1];",
     ]
 
 
