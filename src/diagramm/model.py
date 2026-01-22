@@ -6,7 +6,10 @@ from typing import Iterable
 ALLOWED_DIAGRAM_TYPES = {
     "activity",
     "idef0",
+    "idef1x",
     "idef3",
+    "idef4",
+    "idef5",
     "dfd",
     "uml_use_case",
     "uml_activity",

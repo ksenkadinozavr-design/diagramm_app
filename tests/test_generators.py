@@ -1,3 +1,4 @@
+from diagramm.generators.dot import to_dot
 from diagramm.generators.mermaid import to_mermaid
 from diagramm.generators.plantuml import to_plantuml
 from diagramm.model import Diagram, Edge, Node
@@ -35,3 +36,21 @@ def test_plantuml_output_contains_transitions():
     assert "start --> step" in output
     assert "decision --> end : да" in output
     assert "end --> [*]" in output
+
+
+def test_dot_output_contains_ports_for_roles():
+    diagram = Diagram(
+        diagram_type="idef0",
+        nodes=(
+            Node(id="A1", type="process", label="Auth"),
+            Node(id="Input", type="input"),
+            Node(id="Output", type="output"),
+        ),
+        edges=(
+            Edge(from_id="Input", to_id="A1", condition="input"),
+            Edge(from_id="A1", to_id="Output", condition="output"),
+        ),
+    )
+    output = to_dot(diagram)
+    assert "Input -> A1:w" in output
+    assert "A1:e -> Output" in output

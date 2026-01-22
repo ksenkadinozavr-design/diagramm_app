@@ -1,0 +1,46 @@
+from __future__ import annotations
+
+from diagramm.model import Diagram, Edge
+
+PORTS = {
+    "input": "w",
+    "control": "n",
+    "output": "e",
+    "mechanism": "s",
+}
+
+
+def _format_label(label: str) -> str:
+    return label.replace("\"", "\\\"")
+
+
+def _edge_with_ports(edge: Edge) -> tuple[str, str, str | None]:
+    if not edge.condition:
+        return edge.from_id, edge.to_id, None
+
+    condition = edge.condition.strip().lower()
+    port = PORTS.get(condition)
+    if not port:
+        return edge.from_id, edge.to_id, edge.condition
+
+    if condition == "output":
+        return f"{edge.from_id}:{port}", edge.to_id, None
+    return edge.from_id, f"{edge.to_id}:{port}", None
+
+
+def to_dot(diagram: Diagram) -> str:
+    lines = ["digraph diagramm {", "  rankdir=LR;", "  node [shape=box];"]
+
+    for node in diagram.nodes:
+        label = _format_label(node.label or node.id)
+        lines.append(f'  {node.id} [label="{label}"];')
+
+    for edge in diagram.edges:
+        from_id, to_id, label = _edge_with_ports(edge)
+        if label:
+            lines.append(f'  {from_id} -> {to_id} [label="{_format_label(label)}"];')
+        else:
+            lines.append(f"  {from_id} -> {to_id};")
+
+    lines.append("}")
+    return "\n".join(lines)

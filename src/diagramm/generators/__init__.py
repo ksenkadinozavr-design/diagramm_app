@@ -1,1 +1,1 @@
-__all__ = ["mermaid", "plantuml", "json_export"]
+__all__ = ["mermaid", "plantuml", "json_export", "dot"]
