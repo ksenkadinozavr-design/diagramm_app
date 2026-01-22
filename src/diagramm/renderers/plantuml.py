@@ -30,17 +30,25 @@ def render_to_png(
     if not input_path.exists():
         raise RenderError(f"Input file does not exist: {input_path}")
     ensure_parent_dir(output_path)
+    command = _resolve_command(plantuml_jar)
+    command += ["-tpng", str(input_path)]
+    run_command(command, "PlantUML failed to render PNG")
+
     output_dir = output_path.parent
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    command = _resolve_command(plantuml_jar)
-    command += ["-tpng", str(input_path), "-o", str(output_dir)]
-    run_command(command, "PlantUML failed to render PNG")
+    expected_path = input_path.with_suffix(".png")
+    fallback_path = output_dir / f"{input_path.stem}.png"
 
-    expected_path = output_dir / f"{input_path.stem}.png"
-    if not expected_path.exists():
-        raise RenderError(f"PlantUML output not found: {expected_path}")
+    if expected_path.exists():
+        source_path = expected_path
+    elif fallback_path.exists():
+        source_path = fallback_path
+    else:
+        raise RenderError(
+            f"PlantUML output not found: {expected_path} or {fallback_path}"
+        )
 
-    if expected_path.resolve() != output_path.resolve():
+    if source_path.resolve() != output_path.resolve():
         output_path.unlink(missing_ok=True)
-        expected_path.replace(output_path)
+        source_path.replace(output_path)
