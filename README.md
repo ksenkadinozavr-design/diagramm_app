@@ -146,6 +146,7 @@ Examples:
 
 ```bash
 diagramm render examples/idef0_auth.json --output out.png
+diagramm render examples/idef0_auth.json --style idef0 --output out.png
 diagramm render examples/idef3_order.json --output out.png
 diagramm generate examples/idef0_auth.json --format dot --render png --output out.png
 ```

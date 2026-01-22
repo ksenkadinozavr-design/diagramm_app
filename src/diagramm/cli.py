@@ -68,7 +68,9 @@ def _default_engine(diagram_type: str) -> str | None:
     }.get(diagram_type)
 
 
-def _dot_style(diagram: Diagram) -> str | None:
+def _dot_style(diagram: Diagram, override: str | None) -> str | None:
+    if override:
+        return override
     if diagram.diagram_type == "idef0":
         return "idef0"
     if diagram.diagram_type in {"idef1x", "idef3", "idef4", "idef5", "dfd"}:
@@ -114,7 +116,11 @@ def command_validate(path: str) -> int:
 
 
 def command_generate(
-    path: str, format_name: str, output: str | None, render: str | None
+    path: str,
+    format_name: str,
+    output: str | None,
+    render: str | None,
+    style: str | None,
 ) -> int:
     diagram = _load_diagram(path)
     if diagram is None:
@@ -140,7 +146,7 @@ def command_generate(
             print("ERROR: --output is required for PNG rendering.")
             return 1
         content = (
-            to_dot(diagram, style=_dot_style(diagram))
+            to_dot(diagram, style=_dot_style(diagram, style))
             if format_name == "dot"
             else generator(diagram)
         )
@@ -170,7 +176,7 @@ def command_generate(
         return 0
 
     content = (
-        to_dot(diagram, style=_dot_style(diagram))
+        to_dot(diagram, style=_dot_style(diagram, style))
         if format_name == "dot"
         else generator(diagram)
     )
@@ -208,6 +214,7 @@ def command_render(
     engine: str | None,
     keep_intermediate: bool,
     tmpdir: str | None,
+    style: str | None,
 ) -> int:
     diagram = _load_diagram(path)
     if diagram is None:
@@ -243,7 +250,7 @@ def command_render(
         }[format_name]
         intermediate_path = temp_dir / f"diagram{extension}"
         content = (
-            to_dot(diagram, style=_dot_style(diagram))
+            to_dot(diagram, style=_dot_style(diagram, style))
             if format_name == "dot"
             else generator(diagram)
         )
@@ -279,6 +286,11 @@ def build_parser() -> argparse.ArgumentParser:
         choices=["png"],
         help="render output (e.g. png) using external renderer",
     )
+    generate.add_argument(
+        "--style",
+        choices=["idef", "idef0"],
+        help="optional DOT style override",
+    )
 
     render = subparsers.add_parser("render", help="render diagram to PNG")
     render.add_argument("path", help="path to JSON file")
@@ -295,6 +307,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     render.add_argument(
         "--tmpdir", help="temporary directory for intermediate files"
+    )
+    render.add_argument(
+        "--style",
+        choices=["idef", "idef0"],
+        help="optional DOT style override",
     )
 
     normalize_cmd = subparsers.add_parser(
@@ -322,7 +339,9 @@ def main() -> None:
     if args.command == "validate":
         sys.exit(command_validate(args.path))
     if args.command == "generate":
-        sys.exit(command_generate(args.path, args.format, args.output, args.render))
+        sys.exit(
+            command_generate(args.path, args.format, args.output, args.render, args.style)
+        )
     if args.command == "normalize":
         sys.exit(command_normalize(args.path, args.output))
     if args.command == "schema":
@@ -337,6 +356,7 @@ def main() -> None:
                 args.engine,
                 args.keep_intermediate,
                 args.tmpdir,
+                args.style,
             )
         )
 

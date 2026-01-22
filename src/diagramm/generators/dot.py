@@ -48,9 +48,9 @@ def _style_lines(style: str | None) -> list[str]:
 
     if style in {"idef", "idef0"}:
         return [
-            "  graph [rankdir=LR, splines=ortho, nodesep=0.9, ranksep=1.2, bgcolor=\"#ffffff\", fontname=\"Arial\", fontsize=10, overlap=false, concentrate=false, pad=\"0.2\"];",
+            "  graph [rankdir=LR, splines=ortho, nodesep=0.9, ranksep=1.2, bgcolor=\"#ffffff\", fontname=\"Arial\", fontsize=10, overlap=false, concentrate=false, pad=\"0.2\", ordering=out, pack=true, packmode=graph, newrank=true];",
             "  node [shape=box, style=\"filled\", fillcolor=\"#ffffff\", color=\"#2b2b2b\", penwidth=1, fontname=\"Arial\", fontsize=10, margin=\"0.16,0.10\"];",
-            "  edge [color=\"#2b2b2b\", arrowsize=0.7, fontname=\"Arial\", fontsize=9, arrowhead=normal, penwidth=1];",
+            "  edge [color=\"#2b2b2b\", arrowsize=0.7, fontname=\"Arial\", fontsize=9, arrowhead=normal, penwidth=1, minlen=2];",
         ]
 
     return ["  rankdir=LR;", "  node [shape=box];"]

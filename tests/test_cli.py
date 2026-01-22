@@ -31,6 +31,7 @@ def test_render_command_uses_default_engine(monkeypatch, tmp_path):
         engine=None,
         keep_intermediate=False,
         tmpdir=None,
+        style=None,
     )
 
     assert result == 0
@@ -52,6 +53,7 @@ def test_generate_command_renders_png(monkeypatch, tmp_path):
         format_name="dot",
         output=str(output_path),
         render="png",
+        style=None,
     )
 
     assert result == 0
