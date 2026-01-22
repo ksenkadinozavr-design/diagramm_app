@@ -1,0 +1,21 @@
+{
+  "diagram_type": "activity",
+  "nodes": [
+    {"id": "start", "type": "start"},
+    {"id": "order", "type": "action", "label": "Оформить заказ"},
+    {"id": "check", "type": "action", "label": "Проверить наличие"},
+    {"id": "decision", "type": "decision", "label": "Товар есть?"},
+    {"id": "success", "type": "action", "label": "Оформить заказ"},
+    {"id": "fail", "type": "action", "label": "Отклонить заказ"},
+    {"id": "end", "type": "end"}
+  ],
+  "edges": [
+    {"from": "start", "to": "order"},
+    {"from": "order", "to": "check"},
+    {"from": "check", "to": "decision"},
+    {"from": "decision", "to": "success", "condition": "да"},
+    {"from": "decision", "to": "fail", "condition": "нет"},
+    {"from": "success", "to": "end"},
+    {"from": "fail", "to": "end"}
+  ]
+}
