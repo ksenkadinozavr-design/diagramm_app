@@ -20,9 +20,13 @@ from diagramm.schema import LLM_SCHEMA
 from diagramm.validator import DiagramValidator
 
 
-def _load_payload(path: str) -> dict:
-    with open(path, "r", encoding="utf-8") as handle:
-        return json.load(handle)
+def _load_payload(path: str) -> dict | None:
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+    except FileNotFoundError:
+        print(f"ERROR: File not found: {path}")
+        return None
 
 
 def _write_output(content: str, output: str | None) -> None:
@@ -34,6 +38,8 @@ def _write_output(content: str, output: str | None) -> None:
 
 def _load_diagram(path: str) -> Diagram | None:
     payload = _load_payload(path)
+    if payload is None:
+        return None
     validator = DiagramValidator()
     result = validator.validate_payload(payload)
     if not result.valid:
@@ -85,6 +91,8 @@ def _intermediate_dir(tmpdir: str | None, keep: bool):
 
 def command_validate(path: str) -> int:
     payload = _load_payload(path)
+    if payload is None:
+        return 1
     validator = DiagramValidator()
     result = validator.validate_payload(payload)
     if result.valid:
@@ -155,6 +163,8 @@ def command_generate(
 
 def command_normalize(path: str, output: str | None) -> int:
     payload = _load_payload(path)
+    if payload is None:
+        return 1
     diagram = normalize(Diagram.from_payload(payload))
     _write_output(to_json(diagram), output)
     return 0

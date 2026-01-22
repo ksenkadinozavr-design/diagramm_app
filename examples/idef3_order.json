@@ -1,0 +1,16 @@
+{
+  "diagram_type": "idef3",
+  "nodes": [
+    { "id": "Start", "type": "start", "label": "Start" },
+    { "id": "Receive", "type": "action", "label": "Receive Order" },
+    { "id": "Approve", "type": "decision", "label": "Approve?" },
+    { "id": "Ship", "type": "action", "label": "Ship Order" },
+    { "id": "End", "type": "end", "label": "End" }
+  ],
+  "edges": [
+    { "from": "Start", "to": "Receive" },
+    { "from": "Receive", "to": "Approve" },
+    { "from": "Approve", "to": "Ship", "condition": "yes" },
+    { "from": "Ship", "to": "End" }
+  ]
+}
