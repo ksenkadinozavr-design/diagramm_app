@@ -67,6 +67,12 @@ def _default_engine(diagram_type: str) -> str | None:
     }.get(diagram_type)
 
 
+def _dot_style(diagram: Diagram) -> str | None:
+    if diagram.diagram_type == "idef0":
+        return "idef0"
+    return None
+
+
 def _ensure_png_output(output: str | None) -> Path | None:
     if not output:
         print("ERROR: --output is required for PNG rendering.")
@@ -115,10 +121,9 @@ def command_generate(
         "mermaid": to_mermaid,
         "plantuml": to_plantuml,
         "json": to_json,
-        "dot": to_dot,
     }
     generator = generators.get(format_name)
-    if not generator:
+    if not generator and format_name != "dot":
         print(f"Unsupported format: {format_name}")
         return 1
 
@@ -131,7 +136,11 @@ def command_generate(
         if output_path is None:
             print("ERROR: --output is required for PNG rendering.")
             return 1
-        content = generator(diagram)
+        content = (
+            to_dot(diagram, style=_dot_style(diagram))
+            if format_name == "dot"
+            else generator(diagram)
+        )
         with _intermediate_dir(None, False) as temp_dir:
             extension = {
                 "mermaid": ".mmd",
@@ -157,7 +166,12 @@ def command_generate(
                 return 1
         return 0
 
-    _write_output(generator(diagram), output)
+    content = (
+        to_dot(diagram, style=_dot_style(diagram))
+        if format_name == "dot"
+        else generator(diagram)
+    )
+    _write_output(content, output)
     return 0
 
 
@@ -211,8 +225,7 @@ def command_render(
     generator = {
         "mermaid": to_mermaid,
         "plantuml": to_plantuml,
-        "dot": to_dot,
-    }[format_name]
+    }.get(format_name)
     renderer = {
         "graphviz": graphviz.render_to_png,
         "plantuml": plantuml.render_to_png,
@@ -226,7 +239,12 @@ def command_render(
             "dot": ".dot",
         }[format_name]
         intermediate_path = temp_dir / f"diagram{extension}"
-        intermediate_path.write_text(generator(diagram), encoding="utf-8")
+        content = (
+            to_dot(diagram, style=_dot_style(diagram))
+            if format_name == "dot"
+            else generator(diagram)
+        )
+        intermediate_path.write_text(content, encoding="utf-8")
         try:
             renderer(intermediate_path, output_path)
         except RenderError as exc:

@@ -134,6 +134,8 @@ The generators focus on text outputs (Mermaid, PlantUML, JSON). For SVG/PNG/web 
 
 The CLI can render PNGs directly, invoking external tools for deterministic output.
 
+For IDEF0 models, the DOT generator applies a default Graphviz style preset (rounded boxes, orthogonal edges, light background) to better match classic IDEF0 layouts.
+
 Dependencies:
 
 - **Graphviz** (`dot`) for IDEF0/IDEF5 or DOT output.
