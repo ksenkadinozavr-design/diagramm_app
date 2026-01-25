@@ -44,6 +44,12 @@ Generate Mermaid output:
 diagramm generate examples/activity.json --format mermaid
 ```
 
+Generate DOT output for Graphviz:
+
+```bash
+diagramm generate examples/activity.json --format dot --output out.dot
+```
+
 Generate Mermaid output into a file:
 
 ```bash
@@ -96,7 +102,14 @@ echo "Клиент оформляет заказ. Если товар есть..
    - Mermaid: `npx @mermaid-js/mermaid-cli -i out.mmd -o out.svg`
    - PlantUML: `java -jar plantuml.jar out.puml`
 
-5. Run the test suite:
+5. Render PNG directly from the CLI:
+
+   ```bash
+   diagramm render examples/activity.json --engine mermaid --output out.png
+   diagramm generate examples/activity.json --format plantuml --render png --output out.png
+   ```
+
+6. Run the test suite:
 
    ```bash
    pytest
@@ -108,10 +121,38 @@ echo "Клиент оформляет заказ. Если товар есть..
 - `src/diagramm/schema.py` — JSON schema for LLM output.
 - `src/diagramm/validator.py` — consistency checks.
 - `src/diagramm/normalizer.py` — normalization for downstream generators.
-- `src/diagramm/generators/` — renderers (Mermaid, PlantUML, JSON).
+- `src/diagramm/generators/` — generators (Mermaid, PlantUML, DOT, JSON).
+- `src/diagramm/renderers/` — external renderers (Graphviz, PlantUML, Mermaid).
 - `src/diagramm/llm_prompt.py` — system prompt template.
 - `examples/` — sample inputs.
 
 ## Formats
 
 The generators focus on text outputs (Mermaid, PlantUML, JSON). For SVG/PNG/web rendering, use existing external renderers in the next stage.
+
+## PNG output
+
+The CLI can render PNGs directly, invoking external tools for deterministic output.
+
+For IDEF0 models, the DOT generator applies a default Graphviz style preset (straight boxes, orthogonal edges, light background) to better match classic IDEF0 layouts.
+
+Dependencies:
+
+- **Graphviz** (`dot`) for IDEF0/IDEF1X/IDEF3/IDEF4/IDEF5/DFD or DOT output.
+- **PlantUML** (`plantuml` or `PLANTUML_JAR` + Java) for PlantUML output.
+- **Mermaid CLI** (`mmdc` or `npx @mermaid-js/mermaid-cli`) for Mermaid output.
+
+Examples:
+
+```bash
+diagramm render examples/idef0_auth.json --output out.png
+diagramm render examples/idef0_auth.json --style idef0 --output out.png
+diagramm render examples/idef3_order.json --output out.png
+diagramm generate examples/idef0_auth.json --format dot --render png --output out.png
+```
+
+Common errors:
+
+- `Missing 'dot'`: install Graphviz and ensure `dot` is on PATH.
+- `PlantUML is not available`: install `plantuml` or set `PLANTUML_JAR`.
+- `Mermaid CLI is not available`: install `mmdc` or ensure `npx` is on PATH.

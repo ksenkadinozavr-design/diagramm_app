@@ -1,0 +1,14 @@
+{
+  "diagram_type": "idef1x",
+  "nodes": [
+    { "id": "Customer", "type": "entity", "label": "Customer" },
+    { "id": "Order", "type": "process", "label": "Ticket Order" },
+    { "id": "Payment", "type": "process", "label": "Payment" },
+    { "id": "Ticket", "type": "output", "label": "Ticket" }
+  ],
+  "edges": [
+    { "from": "Customer", "to": "Order", "condition": "requests" },
+    { "from": "Order", "to": "Payment", "condition": "requires" },
+    { "from": "Payment", "to": "Ticket", "condition": "issues" }
+  ]
+}

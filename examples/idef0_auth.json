@@ -1,0 +1,16 @@
+{
+  "diagram_type": "idef0",
+  "nodes": [
+    { "id": "Input", "type": "input", "label": "Credentials" },
+    { "id": "A1", "type": "process", "label": "Authenticate" },
+    { "id": "Output", "type": "output", "label": "Session" },
+    { "id": "Control", "type": "decision", "label": "Policy" },
+    { "id": "Mechanism", "type": "actor", "label": "Auth Service" }
+  ],
+  "edges": [
+    { "from": "Input", "to": "A1", "condition": "input" },
+    { "from": "Control", "to": "A1", "condition": "control" },
+    { "from": "A1", "to": "Output", "condition": "output" },
+    { "from": "Mechanism", "to": "A1", "condition": "mechanism" }
+  ]
+}
