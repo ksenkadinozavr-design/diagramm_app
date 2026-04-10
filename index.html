@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Планировщик постов по Крыму</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>Автоматизация постов: Крым и крымские места</h1>
+        <p>
+          Генерируйте посты с реальными изображениями: 3 фото + описание на
+          каждую дату.
+        </p>
+      </header>
+
+      <section class="panel controls">
+        <div class="field">
+          <label for="startDate">Дата начала</label>
+          <input id="startDate" type="date" value="2026-05-28" />
+        </div>
+
+        <div class="field">
+          <label for="endDate">Дата окончания</label>
+          <input id="endDate" type="date" value="2026-09-05" />
+        </div>
+
+        <div class="field field-wide">
+          <label for="theme">Тон описаний</label>
+          <select id="theme">
+            <option value="inspiring" selected>Вдохновляющий</option>
+            <option value="informative">Информационный</option>
+            <option value="promo">Промо</option>
+          </select>
+        </div>
+
+        <button id="generateBtn">Сгенерировать по диапазону</button>
+        <button id="generate100Btn" class="secondary">Сделать 100 постов</button>
+      </section>
+
+      <section class="panel summary" id="summary" hidden></section>
+
+      <section class="panel actions" id="actions" hidden>
+        <button id="downloadJsonBtn">Скачать JSON</button>
+        <button id="downloadCsvBtn">Скачать CSV</button>
+      </section>
+
+      <section class="panel" id="postsContainer"></section>
+    </main>
+
+    <template id="postCardTemplate">
+      <article class="post-card">
+        <div class="post-head">
+          <h3 class="post-title"></h3>
+          <span class="post-place"></span>
+        </div>
+        <p class="post-description"></p>
+        <div class="photo-grid"></div>
+      </article>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
